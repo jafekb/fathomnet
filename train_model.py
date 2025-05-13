@@ -5,19 +5,12 @@ Author: Ben Jafek
 2025/04/28
 """
 
-import os
-import json
-import random
-
-from PIL import Image
 import pandas as pd
 import torch
 import pytorch_lightning as pl
 from torchvision import transforms
-import torchvision.models as models
-import torchvision.transforms as transforms
 from sklearn.preprocessing import LabelEncoder
-from torch.utils.data import Dataset, DataLoader, Subset
+from torch.utils.data import DataLoader, Subset
 from sklearn.model_selection import StratifiedShuffleSplit
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -26,8 +19,8 @@ from benj_prac.fathomnet.fathomnet_dataset import FathomNetDataset
 from benj_prac.fathomnet.classifier import FathomNetClassifier
 from benj_prac.fathomnet import preprocessing
 
-FULL_JSON = '/home/bjafek/Nuro/benj_prac/fathomnet/data/dataset_train.json'
-SUBSET_JSON = '/home/bjafek/Nuro/benj_prac/fathomnet/data/dataset_train_subset.json'
+FULL_JSON = '/home/bjafek/Nuro/benj_prac/fathomnet/data/train/dataset_train.json'
+SUBSET_JSON = '/home/bjafek/Nuro/benj_prac/fathomnet/data/test/dataset_train_subset.json'
 SUBSET_SIZE = 200
 
 ANNOTATIONS = "/home/bjafek/Nuro/benj_prac/fathomnet/data/train/annotations.csv"
