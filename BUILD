@@ -18,6 +18,18 @@ py_binary(
 )
 
 py_binary(
+    name = "bioclip",
+    srcs = ["bioclip.py"],
+    deps = [
+        ":fathomnet_dataset",
+        "//deps/py:torch",
+        requirement("pandas"),
+        requirement("scikit-learn"),
+        requirement("open-clip-torch"),
+    ],
+)
+
+py_binary(
     name = "eval_model",
     srcs = ["eval_model.py"],
     deps = [
