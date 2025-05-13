@@ -1,0 +1,26 @@
+TODO have to re-download the data bc I was running out of space...
+
+
+first: exactly copied Alexander Merdian-Tarko's code
+    almost perfectly replicated his results.
+
+second: increase batch size to 35, increased n epochs
+    but it didn't matter bc early stopping intervened after 8 epochs...
+
+third: replaced efficientnet_v2_m with efficientnet_v2_l. Had to decrease batch size to 16
+    Only trained for 12 epochs bc I ran out of time. But the performance is better
+
+fourth: same as third but leave it running for longer
+    Early stopping ended it after 9 epochs...
+
+fifth: same as fourth but remove the early stopping, let it run out its full 100 epochs.
+
+
+FUTURE WORK
+1. use BioCLIP - clip embeddings but for biological things
+    https://imageomics.github.io/bioclip/
+    use some feature reduction technique to get it down to 2D so we can visualize the spread.
+    use the centroid of all the examples? what's some like probabilistic KNN technique?
+2. visualization
+    for train
+    for eval
