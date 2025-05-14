@@ -9,6 +9,7 @@ Author: Ben Jafek
 import os
 import time
 
+from matplotlib import pyplot as plt
 import open_clip
 import pandas as pd
 from torchvision import transforms
@@ -45,7 +46,7 @@ def get_dataset():
             transforms.Resize((224, 224)),  # EfficientNetV2-M expects 224x224 input
         ]),
         label_encoder=label_encoder,
-        n_classes_subset=4,
+        n_classes_subset=None,
     )
 
     if N_IMAGES is None:

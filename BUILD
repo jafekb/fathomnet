@@ -24,6 +24,7 @@ py_binary(
         ":fathomnet_dataset",
         "//deps/py:torch",
         requirement("pandas"),
+        requirement("matplotlib"),
         requirement("scikit-learn"),
         requirement("open-clip-torch"),
     ],
