@@ -1,8 +1,9 @@
+import random
+
 import pandas as pd
 from PIL import Image
 from sklearn.preprocessing import LabelEncoder
 from torch.utils.data import Dataset
-
 
 
 class FathomNetDataset(Dataset):
@@ -24,10 +25,17 @@ class FathomNetDataset(Dataset):
         - If `is_test` is True: a tuple (image, image_path).
     """
 
-    def __init__(self, csv_path, transform=None, label_encoder=None, is_test=False):
+    def __init__(self, csv_path, transform=None, label_encoder=None, is_test=False, n_classes_subset=None):
         self.data = pd.read_csv(csv_path)
         self.transform = transform
         self.is_test = is_test
+
+        if n_classes_subset is not None:
+            all_classes = set(self.data["label"])
+            assert n_classes_subset <= len(all_classes)
+            random_classes = random.sample(all_classes, n_classes_subset)
+            self.data = self.data[self.data["label"].isin(random_classes)]
+            print (f"Sampling data to {n_classes_subset} classes: {sorted(random_classes)}")
 
         self.image_paths = self.data["path"].tolist()
 
@@ -57,4 +65,3 @@ class FathomNetDataset(Dataset):
         else:
             label = self.label_ids[idx]
             return image, label
-

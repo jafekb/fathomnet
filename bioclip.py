@@ -15,6 +15,9 @@ from torchvision import transforms
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm, trange
 import torch
+# import umap  # TODO(bjafek)
+from sklearn.manifold import TSNE
+
 
 from benj_prac.fathomnet.fathomnet_dataset import FathomNetDataset
 
@@ -25,16 +28,15 @@ EMBEDDINGS_NAME = "/home/bjafek/Nuro/benj_prac/fathomnet/data/bioclip/embeddings
 IMAGES_NAME = "/home/bjafek/Nuro/benj_prac/fathomnet/data/bioclip/images.pt"
 
 # N_IMAGES = len(dataset)
-N_IMAGES = 100
+N_IMAGES = None
 
 
 def get_dataset():
+    global N_IMAGES
 
     # Load labels
     train_annotations_df = pd.read_csv(ANNOTATIONS)
     label_encoder = LabelEncoder().fit(train_annotations_df["label"].dropna())
-    print(train_annotations_df.head())
-    num_classes = len(label_encoder.classes_)
 
     # Load and transform the training dataset
     full_dataset = FathomNetDataset(
@@ -43,7 +45,11 @@ def get_dataset():
             transforms.Resize((224, 224)),  # EfficientNetV2-M expects 224x224 input
         ]),
         label_encoder=label_encoder,
+        n_classes_subset=4,
     )
+
+    if N_IMAGES is None:
+        N_IMAGES = len(full_dataset)
 
     return full_dataset
 
@@ -65,6 +71,11 @@ def get_images(dataset, preprocess):
 
 
 def create_embeddings(dataset):
+    if os.path.isfile(EMBEDDINGS_NAME):
+        print ("Loading existing embeddings")
+        return torch.load(EMBEDDINGS_NAME)
+
+    print ("Creating new embeddings...")
     model, preprocess_train, preprocess_val = open_clip.create_model_and_transforms(
         "hf-hub:imageomics/bioclip")
     tokenizer = open_clip.get_tokenizer("hf-hub:imageomics/bioclip")
@@ -81,14 +92,44 @@ def create_embeddings(dataset):
 
     out = {
         "embeddings": preprocessed,
-        "labels": dataset.labels,
+        "labels": dataset.labels[:N_IMAGES],
     }
     torch.save(out, EMBEDDINGS_NAME)
 
+    return out
+
+
+def visualize_2d(embeddings):
+    """
+    Reduces the dimensionality of CLIP embeddings to 2D using T-SNE
+    and plots the result.
+    """
+    data = embeddings["embeddings"]
+    labels = embeddings["labels"]
+
+    # Reduce dimensionality to 2D using T-SNE
+    tsne = TSNE(n_components=2, random_state=42)
+    reduced_embeddings = tsne.fit_transform(data)  # Fit and transform
+
+    available_colors = "rgbcmyk"
+    color_conv = {}
+    for idx, lab in enumerate(set(labels)):
+        color_conv[lab] = available_colors[idx]
+    colors = [color_conv[lab] for lab in labels]
+
+    # Create a scatter plot of the reduced embeddings
+    plt.figure(figsize=(10, 8))
+    plt.scatter(reduced_embeddings[:, 0], reduced_embeddings[:, 1], c=colors)
+    plt.title("T-SNE Visualization of CLIP Embeddings")
+    plt.xlabel("T-SNE Dimension 1")
+    plt.ylabel("T-SNE Dimension 2")
+    plt.show()
 
 def main():
     dataset = get_dataset()
     embeddings = create_embeddings(dataset)
+
+    visualize_2d(embeddings)
 
 
 if __name__ == "__main__":
