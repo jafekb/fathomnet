@@ -21,5 +21,6 @@ FUTURE WORK
     use some feature reduction technique to get it down to 2D so we can visualize the spread.
     use the centroid of all the examples? what's some like probabilistic KNN technique?
 2. visualization
-    for train
-    for eval
+    a. for train
+    b. for eval
+    c. Show the BioCLIP embeddings in 2D with names and predictions.
