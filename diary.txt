@@ -15,6 +15,10 @@ fourth: same as third but leave it running for longer
 
 fifth: same as fourth but remove the early stopping, let it run out its full 100 epochs.
 
+sixth: BioCLIP embeddings zero-shot KNN, K=9
+seventh: BioCLIP embeddings zero-shot KNN, K=25
+eighth: BioCLIP embeddings zero-shot KNN, K=3
+
 
 FUTURE WORK
 1. use BioCLIP - clip embeddings but for biological things
