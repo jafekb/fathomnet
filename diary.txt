@@ -11,6 +11,8 @@ fifth: same as fourth but remove the early stopping, let it run out its full 100
 sixth: BioCLIP embeddings zero-shot KNN, K=9
 seventh: BioCLIP embeddings zero-shot KNN, K=25
 eighth: BioCLIP embeddings zero-shot KNN, K=3
+tenth: BioCLIP but use TSNE to get just 2 dimensions.
+eleventh: Same as tenth, but fix a bug in the processing.
 
 ninth: Totally random just as a sanity check on the BioCLIP ones
 

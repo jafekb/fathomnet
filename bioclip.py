@@ -33,7 +33,7 @@ TEST_EMBEDDINGS_NAME = "/home/bjafek/Nuro/benj_prac/fathomnet/data/bioclip/test_
 EMBEDDINGS_DIR = "/home/bjafek/Nuro/benj_prac/fathomnet/data/bioclip/final_embeddings"
 IMAGES_NAME = "/home/bjafek/Nuro/benj_prac/fathomnet/data/bioclip/images.pt"
 
-OUT_DIR = "/home/bjafek/Nuro/benj_prac/fathomnet/output/eighth"
+OUT_DIR = "/home/bjafek/Nuro/benj_prac/fathomnet/output/eleventh"
 
 # N_IMAGES = len(dataset)
 N_IMAGES = None
@@ -156,6 +156,21 @@ def visualize_2d(embeddings):
     plt.ylabel("T-SNE Dimension 2")
     plt.show()
 
+def reduce_dimension(d1, d2):
+    tsne = TSNE(
+        n_components=2,
+        random_state=42,
+        perplexity=5,
+        metric="correlation",
+    )
+    d1_shape = len(d1)
+    combo = torch.concat([d1, d2])
+    transformed = tsne.fit_transform(combo)
+    out1 = transformed[:d1_shape]
+    out2 = transformed[d1_shape:]
+
+    return out1, out2
+
 
 def get_predictions(data, model, preprocess):
     """
@@ -195,13 +210,17 @@ def get_predictions(data, model, preprocess):
         return test_embeddings
 
     test_embeddings = get_test_embeddings(test_dataset)
+    print (test_embeddings.shape)
 
     k_neighbors = 3
     knn_model = KNeighborsClassifier(n_neighbors=k_neighbors)
 
     label_encoder = LabelEncoder()
     y_train = label_encoder.fit_transform(data["labels"])
-    knn_model.fit(data["embeddings"], y_train)
+    x_train = data["embeddings"]
+
+    x_train, test_embeddings = reduce_dimension(x_train, test_embeddings)
+    knn_model.fit(x_train, y_train)
 
     y_pred = knn_model.predict(test_embeddings)
     decoded_predictions = label_encoder.inverse_transform(y_pred).tolist()
